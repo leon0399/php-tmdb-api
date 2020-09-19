@@ -12,6 +12,7 @@
  */
 namespace Tmdb\HttpClient;
 
+use GuzzleLogMiddleware\LogMiddleware;
 use Kevinrob\GuzzleCache\CacheMiddleware;
 use Kevinrob\GuzzleCache\Storage\DoctrineCacheStorage;
 use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
@@ -483,11 +484,7 @@ class HttpClient
             $logger->pushHandler($parameters['handler']);
 
             if ($this->getAdapter() instanceof GuzzleAdapter) {
-                $middleware = new \Concat\Http\Middleware\Logger($logger);
-                $middleware->setRequestLoggingEnabled(true);
-                $middleware->setLogLevel(function($response) {
-                    return LogLevel::DEBUG;
-                });
+                $middleware = new LogMiddleware($logger);
 
                 $this->getAdapter()->getClient()->getConfig('handler')->push(
                     $middleware,
